@@ -45,7 +45,7 @@ export default function LoginForm() {
     <div>
       <CardWrapper
         headerLabel="Welcome back to OASIS"
-        backButtonLabel="Don't have an Account?"
+        backButtonLabel="Don't have an Account? Register"
         backButtonHref="/auth/register"
         showSocial={true}
       >

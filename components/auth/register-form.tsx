@@ -45,7 +45,7 @@ export default function RegisterForm() {
     <div>
       <CardWrapper
         headerLabel="Welcome to OASIS"
-        backButtonLabel="Already have an Account?"
+        backButtonLabel="Already have an Account? Login"
         backButtonHref="/auth/login"
         showSocial={true}
       >
@@ -106,11 +106,49 @@ export default function RegisterForm() {
                   </FormItem>
                 )}
               />
+              <div className="flex space-x-2 ">
+                <FormField
+                  control={form.control}
+                  name="department"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Department</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={isPending}
+                          {...field}
+                          placeholder="ECS/CSE/ECE etc.."
+                          type="text"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="semester"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Semester</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={isPending}
+                          {...field}
+                          placeholder="sem"
+                          type="text"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
             <FormError message={error} />
             <FormSuccess message={success} />
             <Button disabled={isPending} type="submit" className="w-full">
-              Login
+              Register
             </Button>
           </form>
         </Form>

@@ -1,14 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SignOut } from "./signout-button";
-import { getSession } from "@/lib/getSession";
+import { currentUser, getSession } from "@/lib/getSession";
 
 export default async function AppBar() {
-  const session = await getSession();
-  const user = session?.user;
+  const user = await currentUser();
 
   return (
-    <div className="sticky top-3 z-30 flex justify-between w-auto mx-10 lg:mx-20 rounded-xl bg-black/5 backdrop-blur-md border border-white text-white px-6 py-4 items-center hover:bg-white/15 transition-all">
+    <div className="sticky top-3 z-30 flex justify-between w-auto mx-10 lg:mx-20 rounded-xl bg-transparent backdrop-blur-md border border-white text-white px-6 py-4 items-center hover:bg-white/15 transition-all">
       <Link href={"/"}>
         <Image
           src={"/OASIS-logo(small).png"}

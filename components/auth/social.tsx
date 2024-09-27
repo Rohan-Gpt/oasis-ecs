@@ -16,7 +16,7 @@ export default function Social() {
     <div className="flex items-center w-full gap-x-2">
       <Button
         size={"lg"}
-        className="w-full hover:bg-blue-100 transition-all"
+        className="w-full hover:bg-blue-100 transition-all text-black"
         variant={"outline"}
         onClick={() => onClick("google")}
       >
@@ -25,7 +25,7 @@ export default function Social() {
       </Button>
       <Button
         size={"lg"}
-        className="w-full hover:bg-blue-100 transition-all"
+        className="w-full hover:bg-blue-100 transition-all text-black"
         variant={"outline"}
         onClick={() => onClick("github")}
       >

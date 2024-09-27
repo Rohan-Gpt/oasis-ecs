@@ -20,6 +20,12 @@ export const RegisterSchema = z.object({
   name: z.string().min(1, {
     message: "Name is Required",
   }),
+  department: z.string({
+    message: "Department is required"
+  }),
+  semester: z.string({
+    message: "Semester is required"
+  })
 });
 
 export const GuideSchema = z.object({
@@ -37,4 +43,14 @@ export const GuideSchema = z.object({
   duration: z.string().optional(),
   guideLink: z.string().optional(),
   topics: z.union([z.string(), z.array(z.string())]),
+});
+
+export const CreateTeamSchema = z.object({
+  teamName: z.string().min(1, {
+    message: "Team name is required",
+  }),
+  membershipId: z.array(z.string()).min(1, {
+    message: "At least one member is required",
+  }),
+  leaderId: z.string().optional()
 });

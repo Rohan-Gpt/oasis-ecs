@@ -16,15 +16,25 @@ enum UserRole {
 model User {
   id            String          @id @default(cuid())
   name          String?
+  membershipId  String?          @unique
   email         String          @unique
   password      String?
   emailVerified DateTime?
   image         String?
+  department    String?
+  semester      String?
   role          UserRole         @default(USER)
   accounts      Account[]
   sessions      Session[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  leadingTeams  Team[]          @relation("TeamLeader")
+  memberOfTeams Team[]          @relation("TeamMember")
+}
+
+model MembershipCounter {
+  id    Int @id @default(1)
+  count Int @default(0)
 }
  
 model Account {
@@ -77,4 +87,26 @@ model Guides {
   topics  String[]
   duration  String? 
   guideLink  String?
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  leaderId  String
+  leader    User     @relation("TeamLeader", fields: [leaderId], references: [id], onDelete: Cascade)
+  members   User[]   @relation("TeamMember")
+  projects  Project[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id            Int       @id @default(autoincrement())
+  title String
+  description String
+  chosen  Boolean @default(false)
+  icon      String
+  technologies  String[]
+  team Team? @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId String? @unique
 }

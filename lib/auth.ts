@@ -8,20 +8,30 @@ import { UserRole } from "@prisma/client";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Resend from "next-auth/providers/resend";
+import { generateMembershipId } from "@/actions/generateMembershipId";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   events: {
     async linkAccount({ user }) {
+      console.log("linkAccount event triggered for user:", user.id);
+      const membershipId = await generateMembershipId()
+      console.log("this is the memid",membershipId)
       await prisma.user.update({
         where: {
           id: user.id,
         },
         data: {
           emailVerified: new Date(),
+          membershipId,
         },
       });
+      const memuser = await prisma.user.findUnique({
+        where: { email: 'user@example.com' },
+        select: { membershipId: true }
+      });
+      console.log(memuser);
     },
   },
   providers: [
@@ -52,7 +62,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         // User is available during sign-in
-        console.log(token);
+        // console.log(token);
         token.id = user.id;
         token.role = user.role;
       }

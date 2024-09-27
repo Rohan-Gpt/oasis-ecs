@@ -1,8 +1,7 @@
-import { getSession } from "@/lib/getSession";
+import { currentUser, getSession } from "@/lib/getSession";
 
 export default async function WelcomeCard() {
-  const session = await getSession();
-  const user = session?.user;
+  const user = await currentUser();
   const firstName = user?.name?.split(" ")[0];
   return (
     <div className="px-2 py-2">

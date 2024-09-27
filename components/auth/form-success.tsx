@@ -9,7 +9,7 @@ export function FormSuccess({ message }: FormSuccessProps) {
     return null;
   }
   return (
-    <div className="bg-emerald-500/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-emerald-500">
+    <div className="w-full justify-center bg-emerald-500/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-emerald-500">
       <CircleCheck />
       <p>{message}</p>
     </div>

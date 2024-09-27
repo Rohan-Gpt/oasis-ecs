@@ -2,14 +2,13 @@ import { redirect } from "next/navigation";
 import DesignTaskBreakdown from "../../components/circularProgress";
 import WelcomeCard from "../../components/welcomeCard";
 import FreeResources from "../../components/FreeResources";
-import { getSession } from "@/lib/getSession";
+import { currentUser} from "@/lib/getSession";
 import GuideCards from "@/components/GuideCards";
 import EnhancedWeekWiseSyllabus from "@/components/WeekCards";
 import NewAppBar from "@/components/newAppBar";
 
 export default async function dashborad() {
-  const session = await getSession();
-  const user = session?.user;
+  const user = await currentUser();
   if (!user) return redirect("/auth/login");
   return (
     <div className="bg-black">
