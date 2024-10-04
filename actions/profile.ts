@@ -30,7 +30,7 @@ export async function updateUser(values: z.infer<typeof ProfileSchema>) {
         email,
       },
       data: {
-        department,
+        department: department.toUpperCase(),
         semester,
       },
     });

@@ -51,9 +51,12 @@ export const ProfileSchema = z.object({
   department: z.string().min(1, {
     message: "Department is required",
   }),
-  semester: z.string().min(1, {
-    message: "Semester is required",
-  }),
+  semester: z
+    .string()
+    .min(1, {
+      message: "Semester is required",
+    })
+    .max(1),
 });
 
 export const GuideSchema = z.object({

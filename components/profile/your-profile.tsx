@@ -150,6 +150,7 @@ export default function YourProfile({ email }: { email: string }) {
                         disabled={!isEditable || isPending}
                         {...field}
                         type="text"
+                        maxLength={3}
                       />
                     </FormControl>
                     <FormMessage />
@@ -167,6 +168,7 @@ export default function YourProfile({ email }: { email: string }) {
                         disabled={!isEditable || isPending}
                         {...field}
                         type="text"
+                        maxLength={1}
                       />
                     </FormControl>
                     <FormMessage />
