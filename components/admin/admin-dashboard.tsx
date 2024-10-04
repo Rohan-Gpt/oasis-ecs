@@ -32,7 +32,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import CreateGuide from "./guide-create";
+// import CreateGuide from "./handle-guide";
 
 type Guide = {
   id: string;
@@ -73,10 +73,10 @@ export default function AdminDashboard() {
       if (Array.isArray(data)) {
         setGuides(data);
       } else {
-        console.error("API did not return an array", data);
+        // console.error("API did not return an array", data);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }, []);
 
@@ -98,7 +98,7 @@ export default function AdminDashboard() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
-      <CreateGuide />
+      {/* <CreateGuide /> */}
       <div>
         <h2 className="text-xl font-semibold mb-2">Existing Guides</h2>
         <Table>

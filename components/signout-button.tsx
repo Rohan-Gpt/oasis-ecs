@@ -1,7 +1,6 @@
 import { signOut } from "@/lib/auth";
-import { redirect } from "next/navigation";
 
-export function SignOut() {
+export async function SignOut() {
   return (
     <form
       action={async () => {

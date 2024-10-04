@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SignOut } from "./signout-button";
-import { currentUser, getSession } from "@/lib/getSession";
+import { currentUser } from "@/lib/getSession";
+import { UserMenu } from "./user-menu";
 
 export default async function AppBar() {
   const user = await currentUser();
@@ -19,9 +19,7 @@ export default async function AppBar() {
 
       <div className="flex items-center space-x-4">
         {user ? (
-          <div className="">
-            <SignOut />
-          </div>
+          <UserMenu />
         ) : (
           <Link
             href={"/auth/login"}

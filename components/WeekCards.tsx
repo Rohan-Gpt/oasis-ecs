@@ -7,20 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  CheckCircle,
-  Code,
-  Database,
-  Globe,
-  Layout,
-  Server,
-  Smartphone,
-  Zap,
-  BookOpen,
-  Users,
-  LucideIcon,
-} from "lucide-react";
+import { CheckCircle, Code, Zap, Users, LucideIcon } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -28,22 +17,9 @@ type syllabus = {
   week: string;
   title: string;
   description: string;
-  icon: string | LucideIcon;
+  icon: string;
   topics: string[];
   guideLink?: string;
-};
-
-const iconMap: { [key: string]: LucideIcon } = {
-  CheckCircle,
-  Code,
-  Database,
-  Globe,
-  Layout,
-  Server,
-  Smartphone,
-  Zap,
-  BookOpen,
-  Users,
 };
 
 export default function EnhancedWeekWiseSyllabus() {
@@ -54,25 +30,20 @@ export default function EnhancedWeekWiseSyllabus() {
   const sectionRef = useRef(null);
   const timelineRef = useRef(null);
   const contentRef = useRef(null);
+  const [loadedIcons, setLoadedIcons] = useState<{ [key: string]: any }>({});
 
   const fetchSyllabus = useCallback(async () => {
     try {
       const response = await fetch("/api/guides");
       const data = await response.json();
       if (Array.isArray(data)) {
-        const guidesWithIcons = data.map((guide: syllabus) => ({
-          ...guide,
-          icon: iconMap[guide.icon as keyof typeof iconMap],
-        }));
-        const newGuides = guidesWithIcons.filter(
-          (guide) => guide.week !== null
-        );
+        const newGuides = data.filter((guide) => guide.week !== null);
         setSyllabus(newGuides);
       } else {
-        console.error("API did not return an array", data);
+        // console.error("API did not return an array", data);
       }
     } catch (error) {
-      console.error("Error fetching guides:", error);
+      // console.error("Error fetching guides:", error);
     } finally {
       setLoading(false);
     }
@@ -81,6 +52,36 @@ export default function EnhancedWeekWiseSyllabus() {
   useEffect(() => {
     fetchSyllabus();
   }, [fetchSyllabus]);
+
+  useEffect(() => {
+    const fetchIcons = async () => {
+      const iconPromises = syllabus.map(async (guide) => {
+        if (!guide.icon) return null;
+        const iconName = guide.icon; // Use guide.icon as iconName
+        if (loadedIcons[iconName]) return loadedIcons[iconName]; // Return cached icon if already loaded
+
+        try {
+          const ImportedIcon = await dynamic<React.ComponentType<any>>(() =>
+            import("lucide-react").then(
+              (mod) =>
+                mod[iconName as keyof typeof mod] as React.ComponentType<any>
+            )
+          );
+          setLoadedIcons((prev) => ({ ...prev, [iconName]: ImportedIcon }));
+          return ImportedIcon;
+        } catch (error) {
+          // console.error(`Icon "${iconName}" not found`);
+          return null;
+        }
+      });
+
+      await Promise.all(iconPromises);
+    };
+
+    if (syllabus.length > 0) {
+      fetchIcons();
+    }
+  }, [syllabus, loadedIcons]);
 
   useEffect(() => {
     const cards = gsap.utils.toArray(".week-card");
@@ -205,73 +206,83 @@ export default function EnhancedWeekWiseSyllabus() {
                 </TabsTrigger>
               ))}
             </TabsList>
-            {syllabus.map((week, index) => (
-              <TabsContent key={week.week} value={week.week.toString()}>
-                <Card
-                  className={`week-card week-card-${week.week} bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 text-white`}
-                >
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                      <week.icon className="h-8 w-8 text-blue-400" />
-                      {week.title}
-                    </CardTitle>
-                    <Badge variant="outline" className="bg-blue-600 text-white">
-                      Week {week.week}
-                    </Badge>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-300 mb-4 text-lg">
-                      {week.description}
-                    </p>
-                    <h4 className="font-semibold text-xl mb-3 text-blue-300">
-                      Topics Covered:
-                    </h4>
-                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {week.topics.map((topic, topicIndex) => (
-                        <li
-                          key={topicIndex}
-                          className="text-white flex items-center gap-2 bg-gray-700 rounded-lg p-3 transition-all hover:bg-gray-600"
-                        >
-                          <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0" />
-                          <span>{topic}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                  <CardContent>
-                    {syllabus[index].guideLink ? (
-                      <Link
-                        href={`/guides/${syllabus[index].guideLink}`}
-                        className="flex items-end w-40  bg-blue-600 hover:bg-blue-700 font-semibold text-white px-4 py-1 rounded-lg hover:drop-shadow-lg hover:shadow-white hover:-translate-y-1 transition-all group"
+            {syllabus.map((week, index) => {
+              const IconComponent = loadedIcons[week.icon] || null;
+              return (
+                <TabsContent key={week.week} value={week.week.toString()}>
+                  <Card
+                    className={`week-card week-card-${week.week} bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 text-white`}
+                  >
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                        {IconComponent ? (
+                          <IconComponent className="h-8 w-8 text-blue-400" />
+                        ) : (
+                          <span className="h-8 w-8 text-red-500">?</span> // Fallback if icon not found
+                        )}
+                        {week.title}
+                      </CardTitle>
+                      <Badge
+                        variant="outline"
+                        className="bg-blue-600 text-white"
                       >
-                        View Guide
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="ml-2 w-6 h-6 group-hover:translate-x-2 transition-all"
+                        Week {week.week}
+                      </Badge>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-300 mb-4 text-lg">
+                        {week.description}
+                      </p>
+                      <h4 className="font-semibold text-xl mb-3 text-blue-300">
+                        Topics Covered:
+                      </h4>
+                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {week.topics.map((topic, topicIndex) => (
+                          <li
+                            key={topicIndex}
+                            className="text-white flex items-center gap-2 bg-gray-700 rounded-lg p-3 transition-all hover:bg-gray-600"
+                          >
+                            <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0" />
+                            <span>{topic}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                    <CardContent>
+                      {syllabus[index].guideLink ? (
+                        <Link
+                          href={`/guides/${syllabus[index].guideLink}`}
+                          className="flex items-end w-40  bg-blue-600 hover:bg-blue-700 font-semibold text-white px-4 py-1 rounded-lg hover:drop-shadow-lg hover:shadow-white hover:-translate-y-1 transition-all group"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      </Link>
-                    ) : (
-                      <button
-                        disabled
-                        className="cursor-not-allowed flex items-end w-36  bg-blue-600 hover:bg-blue-700 font-semibold text-white px-4 py-1 rounded-lg hover:drop-shadow-lg hover:shadow-white hover:-translate-y-1 transition-all group"
-                      >
-                        Coming soon
-                      </button>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            ))}
+                          View Guide
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="ml-2 w-6 h-6 group-hover:translate-x-2 transition-all"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            />
+                          </svg>
+                        </Link>
+                      ) : (
+                        <button
+                          disabled
+                          className="cursor-not-allowed flex items-end w-36  bg-blue-600 hover:bg-blue-700 font-semibold text-white px-4 py-1 rounded-lg hover:drop-shadow-lg hover:shadow-white hover:-translate-y-1 transition-all group"
+                        >
+                          Coming soon
+                        </button>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              );
+            })}
           </Tabs>
         </div>
       </div>

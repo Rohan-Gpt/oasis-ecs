@@ -16,8 +16,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   events: {
     async linkAccount({ user }) {
       console.log("linkAccount event triggered for user:", user.id);
-      const membershipId = await generateMembershipId()
-      console.log("this is the memid",membershipId)
+      const membershipId = await generateMembershipId();
+      console.log("this is the memid", membershipId);
       await prisma.user.update({
         where: {
           id: user.id,
@@ -28,8 +28,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
       });
       const memuser = await prisma.user.findUnique({
-        where: { email: 'user@example.com' },
-        select: { membershipId: true }
+        where: { email: "user@example.com" },
+        select: { membershipId: true },
       });
       console.log(memuser);
     },

@@ -49,26 +49,26 @@ export default function DesignTaskBreakdown() {
   const tasks = [
     {
       name: "Web Dev",
-      percentage: 78,
-      time: "2.5 hr 12 min",
+      percentage: 0,
+      time: "0 hr",
       color: "blue-500",
     },
     {
       name: "Dev Ops",
-      percentage: 45,
-      time: "3 hr 23 min",
+      percentage: 0,
+      time: "0 hr",
       color: "green-500",
     },
     {
       name: "Projects",
-      percentage: 62,
-      time: "8.9 hr 39 min",
+      percentage: 0,
+      time: "0 hr",
       color: "orange-500",
     },
     {
       name: "Extra",
-      percentage: 10,
-      time: "10.3 hr 46 min",
+      percentage: 0,
+      time: "0 hr",
       color: "blue-500",
     },
   ];

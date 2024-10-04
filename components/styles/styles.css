@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 :root {
   --notion-font: ui-sans-serif, system-ui, apple-system, BlinkMacSystemFont,
-    'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif,
-    'Segoe UI Emoji', 'Segoe UI Symbol';
+    "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif,
+    "Segoe UI Emoji", "Segoe UI Symbol";
   --fg-color: rgb(55, 53, 47);
   --fg-color-0: rgba(55, 53, 47, 0.09);
   --fg-color-1: rgba(55, 53, 47, 0.16);
@@ -607,8 +607,8 @@
 }
 
 .notion-page-icon {
-  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', NotoColorEmoji,
-    'Noto Color Emoji', 'Segoe UI Symbol', 'Android Emoji', EmojiSymbols;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", NotoColorEmoji,
+    "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols;
   font-size: 1.1em;
   fill: var(--fg-color-6);
   color: var(--fg-color-icon);
@@ -755,7 +755,7 @@ svg.notion-page-icon {
   background: var(--bg-color-2);
   border-radius: 3px;
   font-size: 85%;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier,
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
     monospace;
 }
 
@@ -847,6 +847,7 @@ svg.notion-page-icon {
 
 .notion-code {
   position: relative;
+  /* text-decoration-color: #eb5757; */
   width: 100%;
   padding: 1em;
   margin: 4px 0;
@@ -856,7 +857,7 @@ svg.notion-page-icon {
   box-sizing: border-box;
   overflow: auto;
   background: var(--bg-color-1);
-  font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier,
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier,
     monospace;
 }
 
@@ -2676,7 +2677,7 @@ svg.notion-page-icon {
 }
 
 .notion-yt-lite::before {
-  content: '';
+  content: "";
   display: block;
   position: absolute;
   top: 0;
@@ -2753,7 +2754,7 @@ svg.notion-page-icon {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  width: 120%
+  width: 120%;
 }
 
 .notion-collection-view-tabs-content-item {
@@ -2798,14 +2799,14 @@ svg.notion-page-icon {
   }
 }
 
-.notion-collection-view-dropdown-content[data-state='open'] {
+.notion-collection-view-dropdown-content[data-state="open"] {
   animation-name: slideDownAndFade;
 }
 
 .nested-form-link {
-  background: none!important;
+  background: none !important;
   border: none;
-  padding: 0!important;
+  padding: 0 !important;
   text-decoration: underline;
   cursor: pointer;
 }

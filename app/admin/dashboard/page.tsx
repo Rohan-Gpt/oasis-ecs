@@ -1,4 +1,5 @@
 import AdminDashboard from "@/components/admin/admin-dashboard";
+import NewAdminDashboard from "@/components/admin/new-admin-dashboard";
 import { getSession, isAdmin } from "@/lib/getSession";
 import { redirect } from "next/navigation";
 
@@ -10,7 +11,7 @@ export default async function AdminDashboardHome() {
 
   return (
     <div>
-      <AdminDashboard />
+      <NewAdminDashboard />
     </div>
   );
 }

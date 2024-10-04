@@ -53,6 +53,11 @@ export default function GSAPBentoGrid() {
 
   return (
     <div className="container mx-auto p-6 bg-transparent text-white min-h-screen mt-36 lg:mt-0">
+      <div className="flex justify-center z-10 rounded-xl py-2 px-4 pb-3">
+        <div className="mt-4 md:mt-0 text-2xl text-center text-white font-semibold md:text-4xl max-w-3xl font-heading">
+          Guru Nanak Institute of Technology
+        </div>
+      </div>
       <span className="flex justify-center text-base text-white">
         powered by
       </span>
