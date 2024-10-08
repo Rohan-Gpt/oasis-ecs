@@ -65,7 +65,21 @@ export async function updateGuide(values: z.infer<typeof GuideSchema>) {
     });
     return { success: "guide updated succesfully" };
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     return { error: "Failed to update guide" };
+  }
+}
+
+export async function deleteGuide(guideId: string, title: string) {
+  try {
+    await prisma.guides.delete({
+      where: {
+        id: guideId,
+      },
+    });
+    return { success: "guide delete succesfully" };
+  } catch (err) {
+    console.log(err);
+    return { error: "Failed to delete guide" };
   }
 }

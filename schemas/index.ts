@@ -63,7 +63,7 @@ export const GuideSchema = z.object({
   id: z.string().optional(),
   week: z.string().optional(),
   title: z.string().min(1, {
-    message: "title is requires",
+    message: "title is required",
   }),
   description: z.string().min(1, {
     message: "description is required",
@@ -71,17 +71,18 @@ export const GuideSchema = z.object({
   difficulty: z.string().min(1, {
     message: "Basic, intermediate or Advanced",
   }),
-  modules: z.string().optional(),
-  duration: z.string().optional(),
-  guideLink: z.string().optional(),
+  modules: z.union([z.string(), z.null()]).optional(),
+  duration: z.union([z.string(), z.null()]).optional(),
+  guideLink: z.union([z.string(), z.null()]).optional(),
   topics: z.union([z.string(), z.array(z.string())]),
   icon: z.string(),
 });
 
 export const ProjectSchema = z.object({
+  id: z.number().optional(),
   title: z.string(),
   description: z.string(),
-  technologies: z.array(z.string()),
+  technologies: z.union([z.string(), z.array(z.string())]),
   icon: z.string(),
 });
 

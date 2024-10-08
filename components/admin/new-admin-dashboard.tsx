@@ -42,13 +42,17 @@ import {
 import { PlusCircle, Pencil, Trash2, BookOpen, FolderGit2 } from "lucide-react";
 import * as z from "zod";
 import { GuideSchema } from "@/schemas";
-import { createGuide } from "@/actions/guides";
+import { createGuide, deleteGuide } from "@/actions/guides";
 import { Form, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSuccess } from "../auth/form-success";
 import { FormError } from "../auth/form-error";
 import AdminGuide from "./handle-guide";
 import EditGuide from "./edit-guide";
+import DeleteGuide from "./delete-guide";
+import AdminProject from "./handle-project";
+import EditProject from "./edit-project";
+import DeleteProject from "./delete-project";
 
 type Guide = {
   id: string;
@@ -64,44 +68,28 @@ type Guide = {
 };
 
 interface Project {
-  id: string;
+  id: number;
   title: string;
   description: string;
-  technologies: string;
   icon: string;
+  technologies: string[];
 }
 
 export default function NewAdminDashboard() {
-  const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
   const [activeSection, setActiveSection] = useState<"guides" | "projects">(
     "guides"
   );
   const [guides, setGuides] = useState<Guide[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [editingGuide, setEditingGuide] = useState<Guide | null>(null);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [guideToDelete, setGuideToDelete] = useState<Guide | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
-  // const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const form = useForm<z.infer<typeof GuideSchema>>({
-    resolver: zodResolver(GuideSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      week: "",
-      difficulty: "",
-      modules: "",
-      duration: "",
-      guideLink: "",
-      topics: [],
-      icon: "",
-    },
-  });
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [selectedGuide, setSelectedGuide] = useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [deleteGuide, setDeleteGuide] = useState(null);
+  const [selectedProject, setSelectedproject] = useState<Project | null>(null);
+  const [deleteProject, setDeleteProject] = useState(null);
 
   const fetchGuides = useCallback(async () => {
     const response = await fetch("/api/guides");
@@ -120,15 +108,26 @@ export default function NewAdminDashboard() {
   }, [fetchGuides, fetchProjects]);
 
   const handleEditProject = (project: Project) => {
-    setEditingProject(project);
+    setSelectedproject(project);
+    setOpenEditDialog(true);
   };
 
-  const handleDeleteProject = (id: string) => {
-    setProjects(projects.filter((project) => project.id !== id));
+  const handleEditGuide = (guide: any) => {
+    setSelectedGuide(guide);
+    setOpenEditDialog(true);
+  };
+  const handleDeleteGuide = (guide: any) => {
+    setDeleteGuide(guide);
+    setOpenDeleteDialog(true);
+  };
+  const handleDeleteProject = (project: any) => {
+    setDeleteProject(project);
+    setOpenDeleteDialog(true);
   };
 
-  const handleEditGuide = (guide: Guide) => {
-    setEditingGuide(guide);
+  const handleSaveGuide = (updatedGuide: any) => {
+    // console.log("Guide saved:", updatedGuide);
+    setOpenEditDialog(false);
   };
 
   return (
@@ -190,7 +189,7 @@ export default function NewAdminDashboard() {
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => {}}
+                        onClick={() => handleDeleteGuide(guide)}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete
@@ -202,71 +201,24 @@ export default function NewAdminDashboard() {
             </Table>
           </>
         )}
-        {editingGuide && <EditGuide guide={editingGuide} />}
+        {deleteGuide && (
+          <DeleteGuide
+            guide={deleteGuide}
+            open={openDeleteDialog}
+            handleClose={() => setOpenDeleteDialog(false)}
+          />
+        )}
+        {selectedGuide && (
+          <EditGuide
+            guide={selectedGuide}
+            open={openEditDialog}
+            handleClose={() => setOpenEditDialog(false)}
+            handleSave={handleSaveGuide}
+          />
+        )}
         {activeSection === "projects" && (
           <>
-            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="mb-4">
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Add New Project
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>
-                    {editingProject ? "Edit Project" : "Create New Project"}
-                  </DialogTitle>
-                  <DialogDescription>
-                    {editingProject
-                      ? "Make changes to the Project here."
-                      : "Add the details for the new Project here."}
-                  </DialogDescription>
-                </DialogHeader>
-                <form>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="title" className="text-right">
-                        Title
-                      </Label>
-                      <Input
-                        id="title"
-                        name="title"
-                        defaultValue={editingProject?.title}
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="icon" className="text-right">
-                        Icon
-                      </Label>
-                      <Input
-                        id="icon"
-                        name="icon"
-                        defaultValue={editingProject?.icon}
-                        className="col-span-3"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="description" className="text-right">
-                        Description
-                      </Label>
-                      <Textarea
-                        id="description"
-                        name="description"
-                        defaultValue={editingProject?.description}
-                        className="col-span-3"
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button type="submit">
-                      {editingGuide ? "Update Project" : "Create Project"}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <AdminProject />
             <Table>
               <TableHeader>
                 <TableRow>
@@ -280,20 +232,22 @@ export default function NewAdminDashboard() {
                   <TableRow key={project.id}>
                     <TableCell>{project.title}</TableCell>
                     <TableCell>{project.technologies}</TableCell>
-                    <TableCell>
+                    <TableCell className="space-x-2">
                       <Button
-                        variant="ghost"
-                        size="icon"
+                        variant="outline"
+                        size="sm"
                         onClick={() => handleEditProject(project)}
                       >
-                        <Pencil className="h-4 w-4" />
+                        <Pencil className="mr-2 h-4 w-4" />
+                        edit
                       </Button>
                       <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeleteProject(project.id)}
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteProject(project)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -302,45 +256,22 @@ export default function NewAdminDashboard() {
             </Table>
           </>
         )}
+        {deleteProject && (
+          <DeleteProject
+            project={deleteProject}
+            open={openDeleteDialog}
+            handleClose={() => setOpenDeleteDialog(false)}
+          />
+        )}
+        {selectedProject && (
+          <EditProject
+            project={selectedProject}
+            open={openEditDialog}
+            handleClose={() => setOpenEditDialog(false)}
+            handleSave={handleSaveGuide}
+          />
+        )}
       </main>
-      <AlertDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete the Guide?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              guide
-              <strong> {guideToDelete?.title}</strong>.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-1 ">
-              <Label htmlFor="name" className="">
-                Type the guide name to confirm:
-              </Label>
-            </div>
-            <Input
-              id="name"
-              value={deleteConfirmation}
-              onChange={(e) => setDeleteConfirmation(e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-red-500 hover:bg-red-500"
-              // onClick={confirmDeleteGuide}
-              disabled={deleteConfirmation !== guideToDelete?.title}
-            >
-              Delete Guide
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

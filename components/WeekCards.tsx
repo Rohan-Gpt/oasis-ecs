@@ -206,83 +206,85 @@ export default function EnhancedWeekWiseSyllabus() {
                 </TabsTrigger>
               ))}
             </TabsList>
-            {syllabus.map((week, index) => {
-              const IconComponent = loadedIcons[week.icon] || null;
-              return (
-                <TabsContent key={week.week} value={week.week.toString()}>
-                  <Card
-                    className={`week-card week-card-${week.week} bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 text-white`}
-                  >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                        {IconComponent ? (
-                          <IconComponent className="h-8 w-8 text-blue-400" />
+            {syllabus
+              .sort((a, b) => Number(a.week) - Number(b.week)) // Sort syllabus array by week in ascending order
+              .map((week, index) => {
+                const IconComponent = loadedIcons[week.icon] || null;
+                return (
+                  <TabsContent key={week.week} value={week.week.toString()}>
+                    <Card
+                      className={`week-card week-card-${week.week} bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 text-white`}
+                    >
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                          {IconComponent ? (
+                            <IconComponent className="h-8 w-8 text-blue-400" />
+                          ) : (
+                            <span className="h-8 w-8 text-red-500">?</span> // Fallback if icon not found
+                          )}
+                          {week.title}
+                        </CardTitle>
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-600 text-white"
+                        >
+                          Week {week.week}
+                        </Badge>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-300 mb-4 text-lg">
+                          {week.description}
+                        </p>
+                        <h4 className="font-semibold text-xl mb-3 text-blue-300">
+                          Topics Covered:
+                        </h4>
+                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {week.topics.map((topic, topicIndex) => (
+                            <li
+                              key={topicIndex}
+                              className="text-white flex items-center gap-2 bg-gray-700 rounded-lg p-3 transition-all hover:bg-gray-600"
+                            >
+                              <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0" />
+                              <span>{topic}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                      <CardContent>
+                        {syllabus[index].guideLink ? (
+                          <Link
+                            href={`/guides/${syllabus[index].guideLink}`}
+                            className="flex items-end w-40 bg-blue-600 hover:bg-blue-700 font-semibold text-white px-4 py-1 rounded-lg hover:drop-shadow-lg hover:shadow-white hover:-translate-y-1 transition-all group"
+                          >
+                            View Guide
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="ml-2 w-6 h-6 group-hover:translate-x-2 transition-all"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                              />
+                            </svg>
+                          </Link>
                         ) : (
-                          <span className="h-8 w-8 text-red-500">?</span> // Fallback if icon not found
+                          <button
+                            disabled
+                            className="cursor-not-allowed flex items-end w-36 bg-blue-600 hover:bg-blue-700 font-semibold text-white px-4 py-1 rounded-lg hover:drop-shadow-lg hover:shadow-white hover:-translate-y-1 transition-all group"
+                          >
+                            Coming soon
+                          </button>
                         )}
-                        {week.title}
-                      </CardTitle>
-                      <Badge
-                        variant="outline"
-                        className="bg-blue-600 text-white"
-                      >
-                        Week {week.week}
-                      </Badge>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-300 mb-4 text-lg">
-                        {week.description}
-                      </p>
-                      <h4 className="font-semibold text-xl mb-3 text-blue-300">
-                        Topics Covered:
-                      </h4>
-                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {week.topics.map((topic, topicIndex) => (
-                          <li
-                            key={topicIndex}
-                            className="text-white flex items-center gap-2 bg-gray-700 rounded-lg p-3 transition-all hover:bg-gray-600"
-                          >
-                            <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0" />
-                            <span>{topic}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                    <CardContent>
-                      {syllabus[index].guideLink ? (
-                        <Link
-                          href={`/guides/${syllabus[index].guideLink}`}
-                          className="flex items-end w-40  bg-blue-600 hover:bg-blue-700 font-semibold text-white px-4 py-1 rounded-lg hover:drop-shadow-lg hover:shadow-white hover:-translate-y-1 transition-all group"
-                        >
-                          View Guide
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="ml-2 w-6 h-6 group-hover:translate-x-2 transition-all"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                            />
-                          </svg>
-                        </Link>
-                      ) : (
-                        <button
-                          disabled
-                          className="cursor-not-allowed flex items-end w-36  bg-blue-600 hover:bg-blue-700 font-semibold text-white px-4 py-1 rounded-lg hover:drop-shadow-lg hover:shadow-white hover:-translate-y-1 transition-all group"
-                        >
-                          Coming soon
-                        </button>
-                      )}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              );
-            })}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                );
+              })}
           </Tabs>
         </div>
       </div>

@@ -115,6 +115,7 @@ export default function AdminGuide() {
                       <Input
                         disabled={isPending}
                         {...field}
+                        value={field.value ?? ""}
                         placeholder="guideLink"
                         type="text"
                       />
@@ -179,6 +180,7 @@ export default function AdminGuide() {
                       <Input
                         disabled={isPending}
                         {...field}
+                        value={field.value ?? ""}
                         placeholder=""
                         type="text"
                       />
@@ -197,6 +199,7 @@ export default function AdminGuide() {
                       <Input
                         disabled={isPending}
                         {...field}
+                        value={field.value ?? ""}
                         placeholder="Duration"
                         type="text"
                       />
@@ -216,6 +219,24 @@ export default function AdminGuide() {
                         disabled={isPending}
                         {...field}
                         placeholder="write topics separated with comma"
+                        type="text"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="icon"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Icon</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isPending}
+                        {...field}
+                        placeholder="lucide-react icon"
                         type="text"
                       />
                     </FormControl>

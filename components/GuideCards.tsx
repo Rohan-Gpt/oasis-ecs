@@ -39,8 +39,7 @@ const GuideCards = () => {
       const data = await response.json();
       // console.log(data);
       if (Array.isArray(data)) {
-        const newGuides = data.filter((guide) => guide.week == null);
-        setGuides(newGuides);
+        setGuides(data);
       } else {
         // console.error("API did not return an array", data);
       }

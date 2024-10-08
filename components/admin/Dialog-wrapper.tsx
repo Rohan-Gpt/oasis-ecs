@@ -26,12 +26,7 @@ export default function DialogWrapper({
 }: DialogWrapperprops) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   return (
-    <Dialog
-      open={isEditDialogOpen}
-      onOpenChange={() => {
-        setIsEditDialogOpen(false);
-      }}
-    >
+    <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
       <DialogTrigger asChild>
         <Button className="mb-4">
           <PlusCircle className="mr-2 h-4 w-4" />
