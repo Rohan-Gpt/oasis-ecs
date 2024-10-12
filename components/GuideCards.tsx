@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { GetAllGuides } from "@/actions/guides";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,10 +23,10 @@ type Guide = {
   description: string;
   icon: string; // Store icon name as string
   difficulty: string;
-  modules: number;
+  modules: string;
   duration: string;
   guideLink?: string;
-  week?: number;
+  week?: string;
 };
 
 const GuideCards = () => {
@@ -33,26 +34,40 @@ const GuideCards = () => {
   const [guides, setGuides] = useState<Guide[]>([]);
   const [loadedIcons, setLoadedIcons] = useState<{ [key: string]: any }>({});
 
-  const fetchGuides = useCallback(async () => {
-    try {
-      const response = await fetch("/api/guides");
-      const data = await response.json();
-      // console.log(data);
-      if (Array.isArray(data)) {
-        setGuides(data);
-      } else {
-        // console.error("API did not return an array", data);
-      }
-    } catch (error) {
-      // console.error("Error fetching guides:", error);
-    } finally {
-    }
-  }, []);
-
   useEffect(() => {
-    fetchGuides();
-  }, [fetchGuides]);
+    const fetchGuides = async () => {
+      try {
+        // const response = await fetch("/api/guides", { cache: "force-cache" });
+        const data = await GetAllGuides();
+        if (Array.isArray(data)) {
+          setGuides(data as Guide[]);
+        } else {
+          console.error("API did not return an array", data);
+        }
+      } catch (error) {
+        console.error("Error fetching guides:", error);
+      }
+    };
 
+    fetchGuides();
+  }, []);
+  // useEffect(() => {
+  //   const fetchGuides = async () => {
+  //     try {
+  //       const response = await fetch("/api/guides");
+  //       const data = await response.json();
+  //       if (Array.isArray(data)) {
+  //         setGuides(data);
+  //       } else {
+  //         console.error("API did not return an array", data);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching guides:", error);
+  //     }
+  //   };
+
+  //   fetchGuides();
+  // }, []);
   // Fetch icons dynamically for all guides once when component mounts
   useEffect(() => {
     const fetchIcons = async () => {

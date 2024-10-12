@@ -103,16 +103,21 @@ const EditGuide: React.FC<EditGuideProps> = ({
   };
 
   const onSubmit = (values: z.infer<typeof GuideSchema>) => {
-    const sanitizedValues = {
+    const processedValues = {
       ...values,
       id: guide.id,
-      week: values.week?.trim() ?? "",
-      guideLink: values.guideLink?.trim() ?? "",
-      modules: values.modules?.trim() ?? "",
-      duration: values.duration?.trim() ?? "",
+      title: values.title === "" ? null : values.title,
+      description: values.description === "" ? null : values.description,
+      difficulty: values.difficulty === "" ? null : values.difficulty,
+      topics: values.topics.length === 0 ? null : values.topics,
+      icon: values.icon === "" ? null : values.icon,
+      week: values.week === "" ? null : values.week,
+      modules: values.modules === "" ? null : values.modules,
+      duration: values.duration === "" ? null : values.duration,
+      guideLink: values.guideLink === "" ? null : values.guideLink,
     };
     startTransition(() => {
-      updateGuide(sanitizedValues).then((data) => {
+      updateGuide(processedValues as Guide).then((data) => {
         setError(data.error);
         setSuccess(data.success);
       });

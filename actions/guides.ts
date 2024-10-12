@@ -3,8 +3,17 @@ import { prisma } from "@/db/prisma";
 import { GuideSchema } from "@/schemas";
 import * as z from "zod";
 
+export async function GetAllGuides() {
+  console.log("i triggerd");
+  const guides = await prisma.guides.findMany({
+    cacheStrategy: { swr: 60, ttl: 60 },
+  });
+  return guides;
+}
+
 export async function createGuide(values: z.infer<typeof GuideSchema>) {
   const validatedFields = GuideSchema.safeParse(values);
+  console.log(validatedFields);
   if (!validatedFields.success) {
     return { error: "Invalid Fields" };
   }

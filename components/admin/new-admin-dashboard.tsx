@@ -42,7 +42,7 @@ import {
 import { PlusCircle, Pencil, Trash2, BookOpen, FolderGit2 } from "lucide-react";
 import * as z from "zod";
 import { GuideSchema } from "@/schemas";
-import { createGuide, deleteGuide } from "@/actions/guides";
+import { createGuide, deleteGuide, GetAllGuides } from "@/actions/guides";
 import { Form, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSuccess } from "../auth/form-success";
@@ -53,6 +53,7 @@ import DeleteGuide from "./delete-guide";
 import AdminProject from "./handle-project";
 import EditProject from "./edit-project";
 import DeleteProject from "./delete-project";
+import { GetAllProjects } from "@/actions/project";
 
 type Guide = {
   id: string;
@@ -91,21 +92,57 @@ export default function NewAdminDashboard() {
   const [selectedProject, setSelectedproject] = useState<Project | null>(null);
   const [deleteProject, setDeleteProject] = useState(null);
 
-  const fetchGuides = useCallback(async () => {
-    const response = await fetch("/api/guides");
-    const data = await response.json();
-    setGuides(data);
-  }, []);
-  const fetchProjects = useCallback(async () => {
-    const response = await fetch("/api/projects");
-    const data = await response.json();
-    setProjects(data);
+  // const fetchGuides = useCallback(async () => {
+  //   const response = await fetch("/api/guides");
+  //   const data = await response.json();
+  //   setGuides(data);
+  // }, []);
+  useEffect(() => {
+    const fetchGuides = async () => {
+      try {
+        // const response = await fetch("/api/guides", { cache: "force-cache" });
+        const data = await GetAllGuides();
+        if (Array.isArray(data)) {
+          setGuides(data as Guide[]);
+        } else {
+          console.error("API did not return an array", data);
+        }
+      } catch (error) {
+        console.error("Error fetching guides:", error);
+      }
+    };
+
+    fetchGuides();
   }, []);
 
+  // const fetchProjects = useCallback(async () => {
+  //   const response = await fetch("/api/projects");
+  //   const data = await response.json();
+  //   setProjects(data);
+  // }, []);
+
   useEffect(() => {
-    fetchGuides();
+    const fetchProjects = async () => {
+      try {
+        // const response = await fetch("/api/guides", { cache: "force-cache" });
+        const data = await GetAllProjects();
+        if (Array.isArray(data)) {
+          setProjects(data as Project[]);
+        } else {
+          console.error("API did not return an array", data);
+        }
+      } catch (error) {
+        console.error("Error fetching guides:", error);
+      }
+    };
+
     fetchProjects();
-  }, [fetchGuides, fetchProjects]);
+  }, []);
+
+  // useEffect(() => {
+  //   // fetchGuides();
+  //   fetchProjects();
+  // }, [fetchProjects]);
 
   const handleEditProject = (project: Project) => {
     setSelectedproject(project);

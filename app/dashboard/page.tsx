@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import DesignTaskBreakdown from "../../components/circularProgress";
 import WelcomeCard from "../../components/welcomeCard";
 import FreeResources from "../../components/FreeResources";
-import { currentUser} from "@/lib/getSession";
+import { currentUser } from "@/lib/getSession";
 import GuideCards from "@/components/GuideCards";
 import EnhancedWeekWiseSyllabus from "@/components/WeekCards";
 import NewAppBar from "@/components/newAppBar";

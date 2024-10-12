@@ -61,7 +61,7 @@ export const ProfileSchema = z.object({
 
 export const GuideSchema = z.object({
   id: z.string().optional(),
-  week: z.string().optional(),
+  week: z.union([z.string(), z.null()]).optional(),
   title: z.string().min(1, {
     message: "title is required",
   }),

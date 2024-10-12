@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, Code, Zap, Users, LucideIcon } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { GetAllGuides } from "@/actions/guides";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -34,11 +35,10 @@ export default function EnhancedWeekWiseSyllabus() {
 
   const fetchSyllabus = useCallback(async () => {
     try {
-      const response = await fetch("/api/guides");
-      const data = await response.json();
+      const data = await GetAllGuides();
       if (Array.isArray(data)) {
         const newGuides = data.filter((guide) => guide.week !== null);
-        setSyllabus(newGuides);
+        setSyllabus(newGuides as syllabus[]); // Type casting for assurance
       } else {
         // console.error("API did not return an array", data);
       }
@@ -52,6 +52,26 @@ export default function EnhancedWeekWiseSyllabus() {
   useEffect(() => {
     fetchSyllabus();
   }, [fetchSyllabus]);
+  // const fetchSyllabus = useCallback(async () => {
+  //   try {
+  //     const response = await fetch("/api/guides");
+  //     const data = await response.json();
+  //     if (Array.isArray(data)) {
+  //       const newGuides = data.filter((guide) => guide.week !== null);
+  //       setSyllabus(newGuides);
+  //     } else {
+  //       // console.error("API did not return an array", data);
+  //     }
+  //   } catch (error) {
+  //     // console.error("Error fetching guides:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   fetchSyllabus();
+  // }, [fetchSyllabus]);
 
   useEffect(() => {
     const fetchIcons = async () => {

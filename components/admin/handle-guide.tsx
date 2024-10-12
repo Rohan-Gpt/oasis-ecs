@@ -27,6 +27,19 @@ import {
 } from "../ui/select";
 import { createGuide } from "@/actions/guides";
 
+type Guide = {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  difficulty: string;
+  modules: string;
+  duration: string;
+  guideLink?: string;
+  week?: string;
+  topics: string[];
+};
+
 export default function AdminGuide() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
@@ -49,8 +62,21 @@ export default function AdminGuide() {
 
   const onSubmit = (values: z.infer<typeof GuideSchema>) => {
     // console.log("inside onguidesubmit");
+    const processedValues = {
+      ...values,
+      title: values.title === "" ? null : values.title,
+      description: values.description === "" ? null : values.description,
+      difficulty: values.difficulty === "" ? null : values.difficulty,
+      topics: values.topics.length === 0 ? null : values.topics,
+      icon: values.icon === "" ? null : values.icon,
+      week: values.week === "" ? null : values.week,
+      modules: values.modules === "" ? null : values.modules,
+      duration: values.duration === "" ? null : values.duration,
+      guideLink: values.guideLink === "" ? null : values.guideLink,
+    };
+    // console.log(processedValues);
     startTransition(() => {
-      createGuide(values).then((data) => {
+      createGuide(processedValues as Guide).then((data) => {
         setError(data.error);
         setSuccess(data.success);
       });
@@ -134,6 +160,7 @@ export default function AdminGuide() {
                       <Input
                         disabled={isPending}
                         {...field}
+                        value={field.value ?? ""}
                         placeholder="week"
                         type="text"
                       />

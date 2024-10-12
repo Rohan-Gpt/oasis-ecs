@@ -2,6 +2,22 @@
 import { prisma } from "@/db/prisma";
 import { ProjectSchema } from "@/schemas";
 import * as z from "zod";
+
+export async function GetAllProjects() {
+  console.log("am triggerd ");
+  const projects = await prisma.project.findMany({
+    include: {
+      team: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    cacheStrategy: { swr: 60, ttl: 60 },
+  });
+  return projects;
+}
+
 export async function createProject(values: z.infer<typeof ProjectSchema>) {
   const validatedFields = ProjectSchema.safeParse(values);
   if (!validatedFields.success) {
