@@ -1,10 +1,36 @@
 "use server";
 import { prisma } from "@/db/prisma";
+import redis from "@/lib/redis";
 import { ProjectSchema } from "@/schemas";
 import * as z from "zod";
 
+// export async function GetAllProjects() {
+//   console.log("am triggerd ");
+//   const projects = await prisma.project.findMany({
+//     include: {
+//       team: {
+//         select: {
+//           name: true,
+//         },
+//       },
+//     },
+//     cacheStrategy: { swr: 60, ttl: 60 },
+//   });
+//   return projects;
+// }
+
 export async function GetAllProjects() {
-  console.log("am triggerd ");
+  // console.log("I triggered -----------------------------------------");
+
+  // Try to fetch the guides from Redis
+  const cachedProjects = await redis.get("allProjects");
+
+  if (cachedProjects) {
+    // console.log("Returning cached guides");
+    return JSON.parse(cachedProjects); // Parse the cached data before returning
+  }
+
+  // If no cached data, fetch from the database
   const projects = await prisma.project.findMany({
     include: {
       team: {
@@ -13,8 +39,11 @@ export async function GetAllProjects() {
         },
       },
     },
-    cacheStrategy: { swr: 60, ttl: 60 },
   });
+
+  // Store the fetched data in Redis with an expiration time of 1 hour (3600 seconds)
+  await redis.set("allProjects", JSON.stringify(projects));
+
   return projects;
 }
 
@@ -38,6 +67,10 @@ export async function createProject(values: z.infer<typeof ProjectSchema>) {
         icon: values.icon,
       },
     });
+    await redis.del("allProjects");
+
+    // Optionally, cache the new data immediately if needed
+    await redis.set("allProjects", JSON.stringify(await GetAllProjects()));
     return { success: "project created succesfully" };
   } catch (err) {
     console.log(err);
@@ -68,6 +101,10 @@ export async function updateProject(values: z.infer<typeof ProjectSchema>) {
         icon: values.icon,
       },
     });
+    await redis.del("allProjects");
+
+    // Optionally, cache the new data immediately if needed
+    await redis.set("allProjects", JSON.stringify(await GetAllProjects()));
     return { success: "project updated succesfully" };
   } catch (err) {
     console.log(err);
@@ -82,6 +119,10 @@ export async function deleteProject(projectId: number, title: string) {
         id: projectId,
       },
     });
+    await redis.del("allProjects");
+
+    // Optionally, cache the new data immediately if needed
+    await redis.set("allProjects", JSON.stringify(await GetAllProjects()));
     return { success: "project delete succesfully" };
   } catch (err) {
     console.log(err);

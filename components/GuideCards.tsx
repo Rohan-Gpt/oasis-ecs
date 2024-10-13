@@ -30,6 +30,8 @@ type Guide = {
 };
 
 const GuideCards = () => {
+  // console.log("these are the guides");
+  // console.log(guides);
   const sectionRef = useRef(null);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [loadedIcons, setLoadedIcons] = useState<{ [key: string]: any }>({});

@@ -1,15 +1,36 @@
 "use server";
 import { prisma } from "@/db/prisma";
+import redis from "@/lib/redis";
 import { GuideSchema } from "@/schemas";
 import * as z from "zod";
 
 export async function GetAllGuides() {
-  console.log("i triggerd");
-  const guides = await prisma.guides.findMany({
-    cacheStrategy: { swr: 60, ttl: 60 },
-  });
+  // console.log("I triggered -----------------------------------------");
+
+  // Try to fetch the guides from Redis
+  const cachedGuides = await redis.get("allGuides");
+
+  if (cachedGuides) {
+    // console.log("Returning cached guides");
+    return JSON.parse(cachedGuides); // Parse the cached data before returning
+  }
+
+  // If no cached data, fetch from the database
+  const guides = await prisma.guides.findMany();
+
+  // Store the fetched data in Redis with an expiration time of 1 hour (3600 seconds)
+  await redis.set("allGuides", JSON.stringify(guides));
+
   return guides;
 }
+
+// export async function GetAllGuides() {
+//   console.log("i triggerd -----------------------------------------");
+//   const guides = await prisma.guides.findMany({
+//     cacheStrategy: { swr: 3600, ttl: 60 },
+//   });
+//   return guides;
+// }
 
 export async function createGuide(values: z.infer<typeof GuideSchema>) {
   const validatedFields = GuideSchema.safeParse(values);
@@ -37,6 +58,10 @@ export async function createGuide(values: z.infer<typeof GuideSchema>) {
         icon: values.icon,
       },
     });
+    await redis.del("allGuides");
+
+    // Optionally, cache the new data immediately if needed
+    await redis.set("allGuides", JSON.stringify(await GetAllGuides()));
     return { success: "guide created succesfully" };
   } catch (err) {
     // console.log(err);
@@ -72,6 +97,10 @@ export async function updateGuide(values: z.infer<typeof GuideSchema>) {
         icon: values.icon,
       },
     });
+    await redis.del("allGuides");
+
+    // Optionally, cache the new data immediately if needed
+    await redis.set("allGuides", JSON.stringify(await GetAllGuides()));
     return { success: "guide updated succesfully" };
   } catch (err) {
     console.log(err);
@@ -86,6 +115,10 @@ export async function deleteGuide(guideId: string, title: string) {
         id: guideId,
       },
     });
+    await redis.del("allGuides");
+
+    // Optionally, cache the new data immediately if needed
+    await redis.set("allGuides", JSON.stringify(await GetAllGuides()));
     return { success: "guide delete succesfully" };
   } catch (err) {
     console.log(err);
