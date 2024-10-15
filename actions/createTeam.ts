@@ -2,7 +2,9 @@
 
 import { prisma } from "@/db/prisma";
 import { currentUser } from "@/lib/getSession";
+import redis from "@/lib/redis";
 import { CreateTeamSchema } from "@/schemas/index";
+import { GetAllProjects } from "./project";
 
 export async function createTeam(
   teamName: string,
@@ -80,6 +82,9 @@ export async function createTeam(
         },
       },
     });
+    await redis.del("allProjects");
+
+    await redis.set("allProjects", JSON.stringify(await GetAllProjects()));
     return { success: "Team created successfully", team };
   } catch (error) {
     console.error("Error creating team:", error);

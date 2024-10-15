@@ -1,6 +1,4 @@
 import NewAppBar from "@/components/newAppBar";
-import CreateTeamDialog from "@/components/projects/createTeam";
-import CreateTeam from "@/components/projects/createTeam";
 import ProjectsComponent from "@/components/projects/projects";
 import { currentUser } from "@/lib/getSession";
 import { redirect } from "next/navigation";

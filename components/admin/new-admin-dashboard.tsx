@@ -74,6 +74,9 @@ interface Project {
   description: string;
   icon: string;
   technologies: string[];
+  team: {
+    name: string;
+  };
 }
 
 export default function NewAdminDashboard() {
@@ -261,6 +264,7 @@ export default function NewAdminDashboard() {
                 <TableRow>
                   <TableHead>Title</TableHead>
                   <TableHead>Technologies</TableHead>
+                  <TableHead>Team</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -269,6 +273,7 @@ export default function NewAdminDashboard() {
                   <TableRow key={project.id}>
                     <TableCell>{project.title}</TableCell>
                     <TableCell>{project.technologies}</TableCell>
+                    <TableCell>{project?.team?.name}</TableCell>
                     <TableCell className="space-x-2">
                       <Button
                         variant="outline"

@@ -22,12 +22,11 @@ import * as z from "zod";
 export async function GetAllProjects() {
   // console.log("I triggered -----------------------------------------");
 
-  // Try to fetch the guides from Redis
   const cachedProjects = await redis.get("allProjects");
 
   if (cachedProjects) {
-    // console.log("Returning cached guides");
-    return JSON.parse(cachedProjects); // Parse the cached data before returning
+    // console.log("Returning cached projects");
+    return JSON.parse(cachedProjects);
   }
 
   // If no cached data, fetch from the database
@@ -40,8 +39,6 @@ export async function GetAllProjects() {
       },
     },
   });
-
-  // Store the fetched data in Redis with an expiration time of 1 hour (3600 seconds)
   await redis.set("allProjects", JSON.stringify(projects));
 
   return projects;
@@ -69,7 +66,6 @@ export async function createProject(values: z.infer<typeof ProjectSchema>) {
     });
     await redis.del("allProjects");
 
-    // Optionally, cache the new data immediately if needed
     await redis.set("allProjects", JSON.stringify(await GetAllProjects()));
     return { success: "project created succesfully" };
   } catch (err) {
@@ -103,7 +99,6 @@ export async function updateProject(values: z.infer<typeof ProjectSchema>) {
     });
     await redis.del("allProjects");
 
-    // Optionally, cache the new data immediately if needed
     await redis.set("allProjects", JSON.stringify(await GetAllProjects()));
     return { success: "project updated succesfully" };
   } catch (err) {
@@ -121,7 +116,6 @@ export async function deleteProject(projectId: number, title: string) {
     });
     await redis.del("allProjects");
 
-    // Optionally, cache the new data immediately if needed
     await redis.set("allProjects", JSON.stringify(await GetAllProjects()));
     return { success: "project delete succesfully" };
   } catch (err) {

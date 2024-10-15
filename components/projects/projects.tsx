@@ -9,46 +9,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Progress } from "@/components/ui/progress";
-import {
-  AlertCircle,
-  CheckCircle2,
-  Code2,
-  Users,
-  Zap,
-  Search,
-  Clock,
-  Bot,
-  Vote,
-  Glasses,
-  Home,
-  BarChart2,
-  ShoppingCart,
-  LucideIcon,
-} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CreateTeamDialog from "@/components/projects/createTeam";
-import { boolean } from "zod";
+import dynamic from "next/dynamic";
+import { AlertCircle, CheckCircle2, Code2, Search } from "lucide-react";
+import { GetAllProjects } from "@/actions/project";
 
 interface Team {
   name: string;
@@ -61,48 +35,45 @@ interface Project {
   chosen: boolean;
   team?: Team;
   technologies: string[];
-  icon: LucideIcon | string;
+  icon: string;
 }
-
-const iconMap: { [key: string]: LucideIcon } = {
-  AlertCircle,
-  CheckCircle2,
-  Code2,
-  Users,
-  Zap,
-  Search,
-  Clock,
-  Bot,
-  Vote,
-  Glasses,
-  Home,
-  BarChart2,
-  ShoppingCart,
-};
 
 export default function ProjectsComponent() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [teamName, setTeamName] = useState("");
+  // const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  // const [teamName, setTeamName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<"all" | "available" | "chosen">("all");
   const [showConfetti, setShowConfetti] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [loadedIcons, setLoadedIcons] = useState<{ [key: string]: any }>({});
+  // const [isPending, startTransition] = useTransition();
 
-  const fetchProjects = useCallback(async () => {
-    const response = await fetch("/api/projects");
-    const data = await response.json();
-    const ProjectWithIcons = data.map((project: Project) => ({
-      ...project,
-      icon: iconMap[project.icon as keyof typeof iconMap],
-    }));
-    setProjects(ProjectWithIcons);
-    console.log(ProjectWithIcons);
-  }, []);
+  // const fetchProjects = useCallback(async () => {
+  //   const response = await fetch("/api/projects");
+  //   const data = await response.json();
+  //   setProjects(data);
+  //   console.log(data);
+  // }, []);
+
+  // useEffect(() => {
+  //   fetchProjects();
+  // }, [fetchProjects]);
 
   useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await GetAllProjects();
+        if (Array.isArray(data)) {
+          setProjects(data as Project[]);
+        } else {
+          console.error("API did not return an array", data);
+        }
+      } catch (error) {
+        console.error("error fetching projects", error);
+      }
+    };
     fetchProjects();
-  }, [fetchProjects]);
+  }, []);
 
   useEffect(() => {
     if (showConfetti) {
@@ -124,6 +95,36 @@ export default function ProjectsComponent() {
       (filter === "chosen" && project.chosen);
     return matchesSearch && matchesFilter;
   });
+
+  useEffect(() => {
+    const fetchIcons = async () => {
+      const iconPromises = projects.map(async (project) => {
+        if (!project.icon) return null;
+        const iconName = project.icon;
+        if (loadedIcons[iconName]) return loadedIcons[iconName]; // Return cached icon if already loaded
+
+        try {
+          const ImportedIcon = await dynamic<React.ComponentType<any>>(() =>
+            import("lucide-react").then(
+              (mod) =>
+                mod[iconName as keyof typeof mod] as React.ComponentType<any>
+            )
+          );
+          setLoadedIcons((prev) => ({ ...prev, [iconName]: ImportedIcon }));
+          return ImportedIcon;
+        } catch (error) {
+          // console.error(`Icon "${iconName}" not found`);
+          return null;
+        }
+      });
+
+      await Promise.all(iconPromises);
+    };
+
+    if (projects.length > 0) {
+      fetchIcons();
+    }
+  }, [projects, loadedIcons]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-gray-100">
@@ -185,37 +186,43 @@ export default function ProjectsComponent() {
 
         <AnimatePresence>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map((project) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Card
-                  className={`h-full flex flex-col overflow-hidden bg-gray-800/50 backdrop-blur-sm border-gray-700 hover:border-purple-500 transition-all duration-300 ${
-                    project.chosen ? "border-purple-500" : ""
-                  }`}
+            {filteredProjects.map((project) => {
+              const IconComponent = loadedIcons[project.icon] || null;
+              return (
+                <motion.div
+                  key={project.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <CardHeader className="relative p-6 pb-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <project.icon className="p-3 w-14 h-14 bg-gray-700 rounded-full text-white" />
-                      {project.chosen ? (
-                        <CheckCircle2 className="text-green-400 w-6 h-6" />
-                      ) : (
-                        <AlertCircle className="text-amber-400 w-6 h-6" />
-                      )}
-                    </div>
-                    <CardTitle className="text-2xl font-bold text-gray-100 mb-2">
-                      {project.title}
-                    </CardTitle>
-                    <CardDescription className="text-gray-400 line-clamp-2">
-                      {project.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-grow pt-2">
-                    {/* <div className="flex flex-wrap gap-2 mb-4">
+                  <Card
+                    className={`h-full flex flex-col overflow-hidden bg-gray-800/50 backdrop-blur-sm border-gray-700 hover:border-purple-500 transition-all duration-300 ${
+                      project.chosen ? "border-purple-500" : ""
+                    }`}
+                  >
+                    <CardHeader className="relative p-6 pb-4">
+                      <div className="flex items-center justify-between mb-4">
+                        {IconComponent ? (
+                          <IconComponent className="h-8 w-8 text-blue-400" />
+                        ) : (
+                          <span className="h-8 w-8 text-red-500">?</span> // Fallback if icon not found
+                        )}
+                        {project.chosen ? (
+                          <CheckCircle2 className="text-green-400 w-6 h-6" />
+                        ) : (
+                          <AlertCircle className="text-amber-400 w-6 h-6" />
+                        )}
+                      </div>
+                      <CardTitle className="text-2xl font-bold text-gray-100 mb-2">
+                        {project.title}
+                      </CardTitle>
+                      <CardDescription className="text-gray-400 line-clamp-2">
+                        {project.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-grow pt-2">
+                      {/* <div className="flex flex-wrap gap-2 mb-4">
                       <Badge
                         variant="secondary"
                         className={`${getDifficultyColor(
@@ -225,83 +232,83 @@ export default function ProjectsComponent() {
                         <Zap className="w-3 h-3 mr-1" />
                         {project.difficulty}
                       </Badge> */}
-                    {/* <Badge
+                      {/* <Badge
                         variant="secondary"
                         className="bg-blue-600 text-blue-50 font-semibold"
                       >
                         <Users className="w-3 h-3 mr-1" />
                         {project.teamSize} members
                       </Badge> */}
-                    {/* <Badge
+                      {/* <Badge
                         variant="secondary"
                         className="bg-purple-600 text-purple-50 font-semibold"
                       >
                         <Clock className="w-3 h-3 mr-1" />
                         {project.duration} weeks
                       </Badge> */}
-                    {/* </div> */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.technologies.map((tech, index) => (
-                        <TooltipProvider key={index}>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Badge
-                                variant="outline"
-                                className="text-gray-300 border-gray-600"
-                              >
-                                <Code2 className="w-3 h-3 mr-1" />
-                                {tech}
-                              </Badge>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Technology: {tech}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      ))}
-                    </div>
-                    {project.chosen && (
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm text-purple-300">
-                            Team: {project.team?.name}
-                          </span>
-                        </div>
+                      {/* </div> */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.technologies.map((tech, index) => (
+                          <TooltipProvider key={index}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Badge
+                                  variant="outline"
+                                  className="text-gray-300 border-gray-600"
+                                >
+                                  <Code2 className="w-3 h-3 mr-1" />
+                                  {tech}
+                                </Badge>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Technology: {tech}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        ))}
                       </div>
-                    )}
-                  </CardContent>
-                  <CardFooter>
-                    <CreateTeamDialog
-                      label={
-                        project.chosen ? "Project Claimed" : "Choose Project"
-                      }
-                      projectId={project.id}
-                      projectTitle={project.title}
-                      onTeamCreated={(teamName, members) => {
-                        setProjects(
-                          projects.map((p) =>
-                            p.id === project.id
-                              ? {
-                                  ...p,
-                                  chosen: true,
-                                  team: { name: teamName }, // Update to set team as an object
-                                }
-                              : p
-                          )
-                        );
-                        setShowConfetti(true);
-                        // You can add additional logic here to handle the created team
-                        console.log("Team created:", {
-                          projectId: project.id,
-                          teamName,
-                          members,
-                        });
-                      }}
-                    />
-                  </CardFooter>
-                </Card>
-              </motion.div>
-            ))}
+                      {project.chosen && (
+                        <div>
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm text-purple-300">
+                              Team: {project.team?.name}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                    <CardFooter>
+                      <CreateTeamDialog
+                        label={
+                          project.chosen ? "Project Claimed" : "Choose Project"
+                        }
+                        projectId={project.id}
+                        projectTitle={project.title}
+                        onTeamCreated={(teamName, members) => {
+                          setProjects(
+                            projects.map((p) =>
+                              p.id === project.id
+                                ? {
+                                    ...p,
+                                    chosen: true,
+                                    team: { name: teamName },
+                                  }
+                                : p
+                            )
+                          );
+                          setShowConfetti(true);
+                          console.log("Team created:", {
+                            projectId: project.id,
+                            teamName,
+                            members,
+                          });
+                        }}
+                      />
+                    </CardFooter>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
         </AnimatePresence>
       </div>

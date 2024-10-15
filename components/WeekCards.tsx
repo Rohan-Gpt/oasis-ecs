@@ -11,6 +11,7 @@ import { CheckCircle, Code, Zap, Users, LucideIcon } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { GetAllGuides } from "@/actions/guides";
+import { Skeleton } from "./ui/skeleton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -226,6 +227,40 @@ export default function EnhancedWeekWiseSyllabus() {
                 </TabsTrigger>
               ))}
             </TabsList>
+            {loading ? (
+              <Card className="week-card bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 text-white">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                    <Skeleton className="h-8 w-8 rounded-full bg-gray-700" />
+                    <Skeleton className="h-8 w-32 rounded bg-gray-700" />
+                  </CardTitle>
+                  <Skeleton className="h-6 w-20 rounded-full bg-blue-600/50" />
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Skeleton className="h-4 w-3/4 bg-gray-700" />
+                  <Skeleton className="h-4 w-1/2 bg-gray-700" />
+                  <div>
+                    <Skeleton className="h-6 w-40 bg-blue-300/30 mb-3" />
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {[...Array(4)].map((_, index) => (
+                        <li
+                          key={index}
+                          className="flex items-center gap-2 bg-gray-700/50 rounded-lg p-3"
+                        >
+                          <Skeleton className="h-5 w-5 rounded-full bg-green-400/30 flex-shrink-0" />
+                          <Skeleton className="h-4 w-full bg-gray-600" />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </CardContent>
+                <CardContent>
+                  <Skeleton className="h-10 w-40 rounded-lg bg-blue-600/50" />
+                </CardContent>
+              </Card>
+            ) : (
+              ""
+            )}
             {syllabus
               .sort((a, b) => Number(a.week) - Number(b.week)) // Sort syllabus array by week in ascending order
               .map((week, index) => {
