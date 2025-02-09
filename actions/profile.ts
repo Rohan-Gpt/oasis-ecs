@@ -12,7 +12,7 @@ export const GetUser = cache(async (email: string) => {
     where: {
       email,
     },
-    cacheStrategy: { swr: 60, ttl: 60 },
+    // cacheStrategy: { swr: 60, ttl: 60 },
   });
   return user;
 });

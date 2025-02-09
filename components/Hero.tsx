@@ -6,11 +6,17 @@ import { useLocomotiveScroll } from "react-locomotive-scroll";
 import Link from "next/link";
 import { User } from "next-auth";
 import { getSession } from "next-auth/react";
+import { GetAllGuides } from "@/actions/guides";
 
 export default function Hero() {
   const [user, setUser] = useState<User | null | undefined>(null);
-
+  const [data, setData] = useState(null);
   const { scroll } = useLocomotiveScroll();
+
+  async function prefetchData() {
+    const data = await GetAllGuides();
+    setData(data);
+  }
 
   useEffect(() => {
     async function fetchSession() {
@@ -66,7 +72,10 @@ export default function Hero() {
       {user ? (
         <div className="flex justify-center mt-8 md:mt-14 z-10">
           <Link href="/dashboard">
-            <button className="bg-yellow-500 text-white px-6 py-2  rounded-lg text-lg hover:px-8 transition-all hover:shadow-lg hover:shadow-yellow-800">
+            <button
+              onMouseEnter={() => prefetchData()}
+              className="bg-yellow-500 text-white px-6 py-2  rounded-lg text-lg hover:px-8 transition-all hover:shadow-lg hover:shadow-yellow-800"
+            >
               Go to Dashborad
             </button>
           </Link>
