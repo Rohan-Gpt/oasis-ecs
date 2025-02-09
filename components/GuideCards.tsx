@@ -13,8 +13,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { GetAllGuides } from "@/actions/guides";
+import * as LucideIcons from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -72,34 +72,19 @@ const GuideCards = () => {
   // }, []);
   // Fetch icons dynamically for all guides once when component mounts
   useEffect(() => {
-    const fetchIcons = async () => {
-      const iconPromises = guides.map(async (guide) => {
-        if (!guide.icon) return null;
-        const iconName = guide.icon; // Use guide.icon as iconName
-        if (loadedIcons[iconName]) return loadedIcons[iconName]; // Return cached icon if already loaded
+    if (guides.length === 0) return;
 
-        try {
-          const ImportedIcon = await dynamic<React.ComponentType<any>>(() =>
-            import("lucide-react").then(
-              (mod) =>
-                mod[iconName as keyof typeof mod] as React.ComponentType<any>
-            )
-          );
-          setLoadedIcons((prev) => ({ ...prev, [iconName]: ImportedIcon }));
-          return ImportedIcon;
-        } catch (error) {
-          // console.error(`Icon "${iconName}" not found`);
-          return null;
-        }
-      });
+    const newIcons: { [key: string]: any } = {};
+    guides.forEach((guide) => {
+      const IconComponent = LucideIcons[guide.icon as keyof typeof LucideIcons];
+      if (IconComponent) {
+        newIcons[guide.icon] = IconComponent;
+      }
+    });
 
-      await Promise.all(iconPromises);
-    };
-
-    if (guides.length > 0) {
-      fetchIcons();
-    }
-  }, [guides, loadedIcons]);
+    setLoadedIcons((prev) => ({ ...prev, ...newIcons }));
+    console.log(guides);
+  }, [guides]);
 
   useEffect(() => {
     const cards = gsap.utils.toArray<HTMLElement>(".guide-card");
