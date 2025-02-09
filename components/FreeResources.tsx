@@ -27,7 +27,7 @@ export default function Footer() {
             href="https://www.youtube.com/@harkirat1"
             className="hover:underline"
           >
-            Harkirat Singh YouTube
+            Harkirat Singh
           </Link>
           <Link
             href="https://www.youtube.com/@HiteshCodeLab"

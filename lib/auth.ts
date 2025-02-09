@@ -7,7 +7,7 @@ import { LoginSchema } from "@/schemas";
 import { UserRole } from "@prisma/client";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
-import Resend from "next-auth/providers/resend";
+// import Resend from "next-auth/providers/resend";
 import { generateMembershipId } from "@/actions/generateMembershipId";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -56,7 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
     GitHub,
     Google,
-    Resend,
+    // Resend,
   ],
   callbacks: {
     jwt({ token, user }) {
