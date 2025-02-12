@@ -39,10 +39,12 @@ const GuideCards = () => {
   useEffect(() => {
     const fetchGuides = async () => {
       try {
-        // const response = await fetch("/api/guides", { cache: "force-cache" });
         const data = await GetAllGuides();
         if (Array.isArray(data)) {
-          setGuides(data as Guide[]);
+          const sortedGuides = data.sort(
+            (a, b) => (b.guideLink ? 1 : 0) - (a.guideLink ? 1 : 0)
+          );
+          setGuides(sortedGuides as Guide[]);
         } else {
           console.error("API did not return an array", data);
         }
@@ -136,7 +138,7 @@ const GuideCards = () => {
           return (
             <Card
               key={index}
-              className="guide-card bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 text-white"
+              className="guide-card bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 text-white flex flex-col"
               onMouseEnter={() => handleCardHover(index, true)}
               onMouseLeave={() => handleCardHover(index, false)}
             >
@@ -151,24 +153,28 @@ const GuideCards = () => {
                     {guide.difficulty}
                   </Badge>
                 </div>
-                <CardTitle className="mt-4">{guide.title}</CardTitle>
+                <CardTitle className="mt-4 text-xl">{guide.title}</CardTitle>
                 <CardDescription className="text-gray-400">
-                  {guide.description}
+                  {guide.description.length > 40
+                    ? `${guide.description.slice(0, 40)}...`
+                    : guide.description}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+
+              <CardContent className="flex-grow">
                 <div className="flex justify-between text-sm text-gray-400">
                   <span>{guide.modules} modules</span>
                   <span>{guide.duration}</span>
                 </div>
               </CardContent>
-              <CardFooter>
-                {guides[index].guideLink ? (
+
+              <CardFooter className="mt-auto pb-6">
+                {guide.guideLink ? (
                   <Button
                     className="w-full bg-blue-600 hover:bg-blue-700"
                     asChild
                   >
-                    <Link href={`/guides/${guides[index].guideLink}`}>
+                    <Link href={`/guides/${guide.guideLink}`}>
                       Start Learning
                     </Link>
                   </Button>
