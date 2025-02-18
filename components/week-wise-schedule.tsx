@@ -81,12 +81,13 @@ export default function Schedule() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6 h-full mt-6">
-      <h1 className="text-5xl font-bold text-center mb-10 py-2">
-        📅
-        <span className="text-5xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+      <div className="flex justify-center">
+        <CalendarIcon className="h-8 w-8 md:h-14 md:w-14 text-white mr-2" />
+
+        <h1 className="text-3xl md:text-5xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
           Upcoming Classes
-        </span>
-      </h1>
+        </h1>
+      </div>
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-4 justify-between">
@@ -94,7 +95,7 @@ export default function Schedule() {
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="w-[260px] flex justify-between"
+              className="w-full md:w-[260px] flex justify-between"
             >
               <div className="flex items-center">
                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -160,7 +161,7 @@ export default function Schedule() {
                       <Clock className="w-4 h-4" />
                       <span>{classInfo.time}</span>
                     </div>
-                    <p className="flex items-center text-gray-500">
+                    <p className="flex items-center text-white">
                       <Cal className="mr-2 h-4 w-4" />{" "}
                       {format(new Date(classInfo.date), "PPP")}
                     </p>
