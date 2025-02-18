@@ -204,54 +204,97 @@ const prisma = new PrismaClient();
 //   },
 // ];
 
-const projects = [
+// const projects = [
+//   {
+//     title: "AI Chatbot",
+//     description: "Build a conversational AI using natural language processing.",
+//     chosen: false,
+//     technologies: ["Python", "NLP", "Machine Learning"],
+//     icon: "Bot",
+//   },
+//   {
+//     title: "Blockchain Voting",
+//     description: "Develop a secure voting system using blockchain technology.",
+//     chosen: false,
+//     technologies: ["Solidity", "Ethereum", "Web3.js"],
+//     icon: "Vote",
+//   },
+//   {
+//     title: "AR Education App",
+//     description: "Create an AR app for interactive learning experiences.",
+//     chosen: false,
+//     technologies: ["Unity", "ARKit", "C#"],
+//     icon: "Glasses",
+//   },
+//   {
+//     title: "IoT Smart Home",
+//     description: "Design an IoT platform for managing smart home devices.",
+//     chosen: false,
+//     technologies: ["Node.js", "MQTT", "React"],
+//     icon: "Home",
+//   },
+//   {
+//     title: "Social Dashboard",
+//     description: "Build a dashboard to manage multiple social media accounts.",
+//     chosen: false,
+//     technologies: ["React", "GraphQL", "Node.js"],
+//     icon: "BarChart2",
+//   },
+//   {
+//     title: "AI Recommender",
+//     description: "Develop an AI-powered product recommendation system.",
+//     chosen: false,
+//     technologies: ["Python", "TensorFlow", "SQL"],
+//     icon: "ShoppingCart",
+//   },
+// ];
+
+const scheduleData = [
   {
-    title: "AI Chatbot",
-    description: "Build a conversational AI using natural language processing.",
-    chosen: false,
-    technologies: ["Python", "NLP", "Machine Learning"],
-    icon: "Bot",
+    id: 1,
+    date: "2025-02-19",
+    time: "10:00 AM",
+    topic: "Mastering Git & GitHub",
+    host: "Anjana",
+    type: "programming",
   },
   {
-    title: "Blockchain Voting",
-    description: "Develop a secure voting system using blockchain technology.",
-    chosen: false,
-    technologies: ["Solidity", "Ethereum", "Web3.js"],
-    icon: "Vote",
+    id: 2,
+    date: "2025-02-19",
+    time: "04:00 PM",
+    topic: "Intro to System Design",
+    host: "John Doe",
+    type: "architecture",
   },
   {
-    title: "AR Education App",
-    description: "Create an AR app for interactive learning experiences.",
-    chosen: false,
-    technologies: ["Unity", "ARKit", "C#"],
-    icon: "Glasses",
+    id: 3,
+    date: "2025-02-27",
+    time: "06:00 PM",
+    topic: "Building Scalable APIs",
+    host: "Jane Smith",
+    type: "backend",
   },
   {
-    title: "IoT Smart Home",
-    description: "Design an IoT platform for managing smart home devices.",
-    chosen: false,
-    technologies: ["Node.js", "MQTT", "React"],
-    icon: "Home",
+    id: 4,
+    date: "2025-02-27",
+    time: "06:00 PM",
+    topic: "Building Scalable APIs",
+    host: "Jane Smith",
+    type: "backend",
   },
   {
-    title: "Social Dashboard",
-    description: "Build a dashboard to manage multiple social media accounts.",
-    chosen: false,
-    technologies: ["React", "GraphQL", "Node.js"],
-    icon: "BarChart2",
-  },
-  {
-    title: "AI Recommender",
-    description: "Develop an AI-powered product recommendation system.",
-    chosen: false,
-    technologies: ["Python", "TensorFlow", "SQL"],
-    icon: "ShoppingCart",
+    id: 5,
+    date: "2025-02-22",
+    time: "04:00 PM",
+    topic: "Intro to System Design",
+    host: "John Doe",
+    type: "architecture",
   },
 ];
 
 async function main() {
-  for (const guide of projects) {
-    await prisma.project.create({
+  for (const guide of scheduleData) {
+    await prisma.schedule.create({
       data: guide,
     });
   }

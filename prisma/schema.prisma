@@ -111,3 +111,15 @@ model Project {
   team Team? @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId String? @unique
 }
+
+model Schedule {
+  id      Int      @id @default(autoincrement())
+  date    String
+  time    String
+  topic   String
+  host    String
+  type    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -6,6 +6,7 @@ import { currentUser } from "@/lib/getSession";
 import GuideCards from "@/components/GuideCards";
 import EnhancedWeekWiseSyllabus from "@/components/WeekCards";
 import NewAppBar from "@/components/newAppBar";
+import WeekWiseSchedule from "@/components/week-wise-schedule";
 
 export default async function dashborad() {
   const user = await currentUser();

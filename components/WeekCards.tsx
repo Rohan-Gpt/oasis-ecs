@@ -12,6 +12,7 @@ import Link from "next/link";
 import { GetAllGuides } from "@/actions/guides";
 import { Skeleton } from "./ui/skeleton";
 import * as LucideIcons from "lucide-react";
+import { ViewScheduleButton } from "./dashboard/view-schedule-button";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -139,31 +140,20 @@ export default function EnhancedWeekWiseSyllabus() {
       ref={sectionRef}
       className="container mx-auto px-4 py-16 bg-gray-900 text-white"
     >
-      <h2 className="text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
-        Full-Stack Web Development Journey
+      <h2 className="text-5xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+        Workshop Guides
       </h2>
 
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="lg:w-1/3">
           <Card className="bg-gray-800 border-gray-700 text-white">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold">
-                Your Progress
+              <CardTitle className="text-2xl font-bold text-center">
+                Weekly Classes Schedule
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Progress value={progress} className="w-full h-2" />
-                <p className="text-center text-lg">{progress}% Complete</p>
-                <div className="flex justify-between items-center">
-                  <Badge variant="outline" className="bg-blue-500 text-white">
-                    Current: Week {activeWeek}
-                  </Badge>
-                  <Badge variant="outline" className="bg-green-500 text-white">
-                    ? Weeks Total
-                  </Badge>
-                </div>
-              </div>
+            <CardContent className="text-center mt-4 mb-4">
+              <ViewScheduleButton>View Schedule</ViewScheduleButton>
             </CardContent>
           </Card>
 

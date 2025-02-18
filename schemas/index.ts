@@ -95,3 +95,12 @@ export const CreateTeamSchema = z.object({
   }),
   leaderId: z.string().optional(),
 });
+
+export const WorkshopSchema = z.object({
+  id: z.number().optional(),
+  date: z.string(),
+  time: z.string(),
+  topic: z.string(),
+  host: z.string(),
+  type: z.string(),
+});

@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["lh3.googleusercontent.com"], // Add the domain here
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "oasis-ecs.vercel.app", // Replace with your actual image domain
+      },
+    ],
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
