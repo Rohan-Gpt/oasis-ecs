@@ -7,10 +7,21 @@ import GuideCards from "@/components/GuideCards";
 import EnhancedWeekWiseSyllabus from "@/components/WeekCards";
 import NewAppBar from "@/components/newAppBar";
 import WeekWiseSchedule from "@/components/week-wise-schedule";
+import { GetAllGuides } from "@/actions/guides";
+
+// export async function getStaticProps() {
+//   const dashboardData = await GetAllGuides(); // Fetch data from DB
+
+//   return {
+//     props: { dashboardData },
+//     revalidate: false, // We will manually revalidate
+//   };
+// }
 
 export default async function dashborad() {
   const user = await currentUser();
   if (!user) return redirect("/auth/login");
+  const dashboardData = await GetAllGuides(); // Fetch data from DB
   return (
     <div className="bg-black">
       <NewAppBar />
@@ -23,9 +34,9 @@ export default async function dashborad() {
         </div>
       </div>
       <div className="bg-gray-900">
-        <EnhancedWeekWiseSyllabus />
+        <EnhancedWeekWiseSyllabus data={dashboardData} />
       </div>
-      <GuideCards />
+      <GuideCards data={dashboardData} />
       <FreeResources />
     </div>
   );

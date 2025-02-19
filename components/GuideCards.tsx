@@ -29,7 +29,7 @@ type Guide = {
   week?: string;
 };
 
-const GuideCards = () => {
+const GuideCards = ({ data }: { data: Guide[] }) => {
   // console.log("these are the guides");
   // console.log(guides);
   const sectionRef = useRef(null);
@@ -39,22 +39,17 @@ const GuideCards = () => {
   useEffect(() => {
     const fetchGuides = async () => {
       try {
-        const data = await GetAllGuides();
-        if (Array.isArray(data)) {
-          const sortedGuides = data.sort(
-            (a, b) => (b.guideLink ? 1 : 0) - (a.guideLink ? 1 : 0)
-          );
-          setGuides(sortedGuides as Guide[]);
-        } else {
-          console.error("API did not return an array", data);
-        }
+        const sortedGuides = data.sort(
+          (a, b) => (b.guideLink ? 1 : 0) - (a.guideLink ? 1 : 0)
+        );
+        setGuides(sortedGuides as Guide[]);
       } catch (error) {
         console.error("Error fetching guides:", error);
       }
     };
 
     fetchGuides();
-  }, []);
+  }, [data]);
   // useEffect(() => {
   //   const fetchGuides = async () => {
   //     try {

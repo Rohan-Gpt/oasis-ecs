@@ -25,7 +25,11 @@ type syllabus = {
   guideLink?: string;
 };
 
-export default function EnhancedWeekWiseSyllabus() {
+export default function EnhancedWeekWiseSyllabus({
+  data,
+}: {
+  data: syllabus[];
+}) {
   const [syllabus, setSyllabus] = useState<syllabus[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeWeek, setActiveWeek] = useState(1);
@@ -37,19 +41,14 @@ export default function EnhancedWeekWiseSyllabus() {
 
   const fetchSyllabus = useCallback(async () => {
     try {
-      const data = await GetAllGuides();
-      if (Array.isArray(data)) {
-        const newGuides = data.filter((guide) => guide.week !== null);
-        setSyllabus(newGuides as syllabus[]); // Type casting for assurance
-      } else {
-        // console.error("API did not return an array", data);
-      }
+      const newGuides = data.filter((guide) => guide.week !== null);
+      setSyllabus(newGuides as syllabus[]); // Type casting for assurance
     } catch (error) {
       // console.error("Error fetching guides:", error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     fetchSyllabus();
